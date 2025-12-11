@@ -28,9 +28,10 @@ mongoose
 .catch((err)=>console.error("Could to the MonngoDB",err))
 
 
-// app.get('/',(req,res)=>{
-//     res.send('Hello World!');
-// })
+app.get("/", (req, res) => {
+  res.send("Exam Room Allocation API is live! Use /api/... to interact.");
+});
+
 
 const port = process.env.port || 3000;
 app.listen (port,()=>{
