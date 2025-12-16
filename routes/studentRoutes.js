@@ -17,4 +17,11 @@ router.put("/:id", studentController.updateStudent);
 // Delete student by ID
 router.delete("/:id", studentController.deleteStudent);
 
+// new Excel upload route
+
+router.post("/upload", studentController.uploadStudents)
+
+router.get("/search", studentController.searchStudentByIndex);
+
+
 module.exports = router;

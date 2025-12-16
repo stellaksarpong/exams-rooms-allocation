@@ -1,8 +1,8 @@
 require('dotenv').config();
 const express =require('express');
-const mongoose = require ('mongoose');
 const cors = require ('cors');
-
+const connectDB = require ("./config/db")
+// middlewares 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -22,18 +22,16 @@ app.use("/api/allocations",allocationRoutes);
 
 
 // connect to mongodb
-mongoose
-.connect(process.env.mongoURL)
-.then(()=> console.log("Connected to MongoDB"))
-.catch((err)=>console.error("Could to the MonngoDB",err))
+connectDB()
 
+//Test root route
+app.get("/",(req,res)=>{
+    res.send("Welcome to Exam Room Allocation System API");
+})
 
-app.get("/", (req, res) => {
-  res.send("Exam Room Allocation API is live! Use /api/... to interact.");
+//Start server
+const port = process.env.PORT || 3000;
+app.listen (port,()=>{
+    console.log(`Server is running on http://localhost:${port}`);
 });
 
-
-const port = process.env.port || 3000;
-app.listen (port,()=>{
-    console.log(`server is running on http://localhost:${port}`);
-})
