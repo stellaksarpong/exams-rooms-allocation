@@ -1,8 +1,7 @@
-
 const Allocation = require("../models/allocation");
 const Room = require("../models/room");
-const {Parser} = require ("json2csv");
-const PDFDocument = require ("pdfkit");
+const { Parser } = require("json2csv");
+const PDFDocument = require("pdfkit");
 
 // CREATE allocation with seat numbering
 exports.createAllocation = async (req, res) => {
@@ -57,14 +56,15 @@ exports.getAllocations = async (req, res) => {
   }
 };
 
-
 // GET allocation for a specific student
 exports.getStudentAllocation = async (req, res) => {
   try {
     const studentId = req.params.studentId;
 
     // Find allocation that includes this student
-    const allocation = await Allocation.findOne({ "students.student": studentId })
+    const allocation = await Allocation.findOne({
+      "students.student": studentId,
+    })
       .populate("exam")
       .populate("room")
       .populate("students.student");
@@ -75,19 +75,18 @@ exports.getStudentAllocation = async (req, res) => {
 
     // Find seat info for this student
     const studentInfo = allocation.students.find(
-      s => s.student._id.toString() === studentId
+      (s) => s.student._id.toString() === studentId
     );
 
     res.json({
-      exam: allocation.exam.name,
-      room: allocation.room.name,
-      seatNumber: studentInfo.seatNumber,
+      exam: allocation.exam.subject || allocation.exam.name,
+      room: allocation.room.roomNumber || allocation.room.name,
+      seatNumber: studentInfo ? studentInfo.seatNumber : null,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
-
 
 // DELETE allocation
 exports.deleteAllocation = async (req, res) => {
@@ -103,7 +102,6 @@ exports.deleteAllocation = async (req, res) => {
   }
 };
 
-
 // Export all allocations as CSV
 exports.exportAllocationsCSV = async (req, res) => {
   try {
@@ -113,14 +111,33 @@ exports.exportAllocationsCSV = async (req, res) => {
       .populate("students.student");
 
     const data = [];
-    allocations.forEach(allocation => {
-      allocation.students.forEach(s => {
+    allocations.forEach((allocation) => {
+      const examLabel =
+        (allocation.exam &&
+          (allocation.exam.subject || allocation.exam.name)) ||
+        "";
+      const roomLabel =
+        (allocation.room &&
+          (allocation.room.roomNumber || allocation.room.name)) ||
+        "";
+      allocation.students.forEach((s) => {
+        const studentObj = s.student;
+        const studentName =
+          studentObj && typeof studentObj === "object"
+            ? studentObj.name || ""
+            : typeof studentObj === "string"
+            ? studentObj
+            : "";
+        const studentIndex =
+          studentObj && typeof studentObj === "object"
+            ? studentObj.indexNumber || ""
+            : "";
         data.push({
-          Exam: allocation.exam.name,
-          Room: allocation.room.name,
-          Student: s.student.name,
-          "Seat Number": s.seatNumber,
-          "Student Index": s.student.indexNumber
+          Exam: examLabel,
+          Room: roomLabel,
+          Student: studentName,
+          "Seat Number": s.seatNumber || "",
+          "Student Index": studentIndex,
         });
       });
     });
@@ -136,8 +153,6 @@ exports.exportAllocationsCSV = async (req, res) => {
   }
 };
 
-
-
 // Export allocations as PDF
 exports.exportAllocationsPDF = async (req, res) => {
   try {
@@ -149,16 +164,43 @@ exports.exportAllocationsPDF = async (req, res) => {
     const doc = new PDFDocument({ margin: 30, size: "A4" });
 
     res.setHeader("Content-Type", "application/pdf");
-    res.setHeader("Content-Disposition", "attachment; filename=allocations.pdf");
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=allocations.pdf"
+    );
     doc.pipe(res);
 
     doc.fontSize(20).text("Student Allocations", { align: "center" });
     doc.moveDown();
 
-    allocations.forEach(allocation => {
-      doc.fontSize(16).text(`Exam: ${allocation.exam.name} | Room: ${allocation.room.name}`);
-      allocation.students.forEach(s => {
-        doc.fontSize(12).text(`Student: ${s.student.name} | Index: ${s.student.indexNumber} | Seat: ${s.seatNumber}`);
+    allocations.forEach((allocation) => {
+      const examLabel =
+        (allocation.exam &&
+          (allocation.exam.subject || allocation.exam.name)) ||
+        "";
+      const roomLabel =
+        (allocation.room &&
+          (allocation.room.roomNumber || allocation.room.name)) ||
+        "";
+      doc.fontSize(16).text(`Exam: ${examLabel} | Room: ${roomLabel}`);
+      allocation.students.forEach((s) => {
+        const studentObj = s.student;
+        const studentName =
+          studentObj && typeof studentObj === "object"
+            ? studentObj.name || ""
+            : typeof studentObj === "string"
+            ? studentObj
+            : "";
+        const studentIndex =
+          studentObj && typeof studentObj === "object"
+            ? studentObj.indexNumber || ""
+            : "";
+        const seat = s.seatNumber || "";
+        doc
+          .fontSize(12)
+          .text(
+            `Student: ${studentName} | Index: ${studentIndex} | Seat: ${seat}`
+          );
       });
       doc.moveDown();
     });

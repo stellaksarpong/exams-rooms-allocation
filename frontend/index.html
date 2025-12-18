@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Exam Room Allocation System</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="preloader" class="preloader" aria-hidden="false">
+      <div class="preloader-inner text-center" role="status" aria-live="polite">
+        <div class="loader-dots" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="loader-text mt-3 text-white small">
+          Preparing dashboard…
+        </div>
+        <div
+          class="preloader-status mt-3 text-white-50 small"
+          id="preloaderStatus"
+        >
+          Starting...
+        </div>
+        <div class="preloader-progress mt-2" aria-hidden="true">
+          <div
+            class="preloader-progress-bar"
+            id="preloaderBar"
+            style="width: 0%"
+          ></div>
+        </div>
+      </div>
+    </div>
+    <div class="container my-4">
+      <header class="bg-primary text-white rounded-3 p-4 mb-4 shadow-sm">
+        <div class="d-flex flex-column align-items-center">
+          <div>
+            <h1 class="h3 mb-0 brand-title">Exam Room Allocation System</h1>
+          </div>
+          <div class="d-flex gap-3 align-items-center mt-3">
+            <div class="stat-pill text-center">
+              <small class="d-block text-white-50">Rooms</small>
+              <strong id="totalRooms">0</strong>
+            </div>
+            <div class="stat-pill text-center">
+              <small class="d-block text-white-50">Capacity</small>
+              <strong id="totalCapacity">0</strong>
+            </div>
+            <div class="stat-pill text-center">
+              <small class="d-block text-white-50">Students</small>
+              <strong id="totalStudents">0</strong>
+            </div>
+            <div class="stat-pill text-center">
+              <small class="d-block text-white-50">Allocations</small>
+              <strong id="totalAllocations">0</strong>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="card-panel p-0 shadow-sm rounded mb-3">
+        <ul class="nav nav-tabs mb-3" id="mainTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link active"
+              id="tab-rooms-btn"
+              data-bs-toggle="tab"
+              data-bs-target="#roomsTab"
+              type="button"
+              role="tab"
+              aria-controls="roomsTab"
+              aria-selected="true"
+            >
+              Rooms
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
+              id="tab-exams-btn"
+              data-bs-toggle="tab"
+              data-bs-target="#examsTab"
+              type="button"
+              role="tab"
+              aria-controls="examsTab"
+              aria-selected="false"
+            >
+              Exams
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
+              id="tab-students-btn"
+              data-bs-toggle="tab"
+              data-bs-target="#studentsTab"
+              type="button"
+              role="tab"
+              aria-controls="studentsTab"
+              aria-selected="false"
+            >
+              Students
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
+              id="tab-allocate-btn"
+              data-bs-toggle="tab"
+              data-bs-target="#allocateTab"
+              type="button"
+              role="tab"
+              aria-controls="allocateTab"
+              aria-selected="false"
+            >
+              Allocate
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
+              id="tab-report-btn"
+              data-bs-toggle="tab"
+              data-bs-target="#reportTab"
+              type="button"
+              role="tab"
+              aria-controls="reportTab"
+              aria-selected="false"
+            >
+              Report
+            </button>
+          </li>
+        </ul>
+
+        <div class="p-3 border-bottom bg-light">
+          <div class="row g-2">
+            <div class="col-12">
+              <input
+                id="globalSearch"
+                class="form-control"
+                placeholder="Search rooms, students, reports..."
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-content card-panel-body p-4">
+          <div
+            class="tab-pane fade show active"
+            id="roomsTab"
+            role="tabpanel"
+            aria-labelledby="tab-rooms-btn"
+          >
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h2 class="h5">Management Rooms</h2>
+              <div>
+                <button class="btn btn-primary" id="addRoomBtn">
+                  + Add Room
+                </button>
+              </div>
+            </div>
+            <div class="table-responsive shadow-sm rounded">
+              <table class="table table-striped mb-0" id="roomsTable">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Room Number</th>
+                    <th>Capacity</th>
+                    <th>Floor</th>
+                    <th>Building</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="roomsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div
+            class="tab-pane fade"
+            id="studentsTab"
+            role="tabpanel"
+            aria-labelledby="tab-students-btn"
+          >
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h2 class="h5">Management Students</h2>
+              <div class="d-flex gap-2">
+                <label class="btn btn-outline-secondary mb-0" for="studentCsv"
+                  >Import CSV</label
+                >
+                <input
+                  type="file"
+                  id="studentCsv"
+                  accept=".csv"
+                  style="display: none"
+                />
+                <label class="btn btn-outline-secondary mb-0" for="studentXlsx"
+                  >Import Excel</label
+                >
+                <input
+                  type="file"
+                  id="studentXlsx"
+                  accept=".xlsx,.xls"
+                  style="display: none"
+                />
+                <button class="btn btn-primary" id="addStudentBtn">
+                  + Add Student
+                </button>
+              </div>
+            </div>
+            <div class="table-responsive shadow-sm rounded">
+              <table class="table table-hover mb-0" id="studentsTable">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Index</th>
+                    <th>Name</th>
+                    <th>Course</th>
+                    <th>Year</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="studentsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div
+            class="tab-pane fade"
+            id="examsTab"
+            role="tabpanel"
+            aria-labelledby="tab-exams-btn"
+          >
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h2 class="h5">Management Exams</h2>
+              <div>
+                <button class="btn btn-primary" id="addExamBtn">
+                  + Add Exam
+                </button>
+              </div>
+            </div>
+            <div class="table-responsive shadow-sm rounded">
+              <table class="table table-striped mb-0" id="examsTable">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Subject</th>
+                    <th>Code</th>
+                    <th>Duration</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="examsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div
+            class="tab-pane fade"
+            id="allocateTab"
+            role="tabpanel"
+            aria-labelledby="tab-allocate-btn"
+          >
+            <div class="mb-3">
+              <h2 class="h5">Auto Allocate Students</h2>
+              <div class="row g-2 align-items-end mt-2">
+                <div class="col-md-4">
+                  <label class="form-label">Exam Date</label
+                  ><input type="date" id="examDate" class="form-control" />
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Exam Time</label
+                  ><input type="time" id="examTime" class="form-control" />
+                </div>
+                <div class="col-md-4">
+                  <button class="btn btn-success w-100" id="autoAllocateBtn">
+                    Allocate Students
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="tab-pane fade"
+            id="reportTab"
+            role="tabpanel"
+            aria-labelledby="tab-report-btn"
+          >
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h2 class="h5">Allocation Report</h2>
+              <div class="d-flex gap-2">
+                <input
+                  type="date"
+                  id="filterDate"
+                  class="form-control form-control-sm"
+                />
+                <input
+                  type="time"
+                  id="filterTime"
+                  class="form-control form-control-sm"
+                />
+                <button class="btn btn-outline-secondary" id="applyFilterBtn">
+                  Filter
+                </button>
+                <button class="btn btn-warning" id="resetFilterBtn">
+                  Reset Allocations
+                </button>
+                <button class="btn btn-success" id="exportCsvBtn">
+                  Export CSV
+                </button>
+                <button class="btn btn-primary" id="exportPdfBtn">
+                  Export PDF
+                </button>
+              </div>
+            </div>
+            <div class="table-responsive shadow-sm rounded">
+              <table class="table table-sm mb-0" id="reportTable">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Student ID</th>
+                    <th>Name</th>
+                    <th>Course</th>
+                    <th>Room</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="reportTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modals -->
+      <div class="modal fade" id="roomModal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <form id="roomForm">
+              <div class="modal-header">
+                <h5 class="modal-title">Add Room</h5>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                ></button>
+              </div>
+              <div class="modal-body">
+                <input type="hidden" id="roomId" />
+                <div class="mb-3">
+                  <label class="form-label">Room Number</label
+                  ><input class="form-control" id="roomNumber" required />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Capacity</label
+                  ><input
+                    type="number"
+                    class="form-control"
+                    id="capacity"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Floor</label
+                  ><input type="number" class="form-control" id="floor" />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Building</label
+                  ><input class="form-control" id="building" />
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="studentModal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <form id="studentForm">
+              <div class="modal-header">
+                <h5 class="modal-title">Add Student</h5>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                ></button>
+              </div>
+              <div class="modal-body">
+                <input type="hidden" id="studentId" />
+                <div class="mb-3">
+                  <label class="form-label">Index Number</label
+                  ><input class="form-control" id="studentIdInput" required />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Name</label
+                  ><input class="form-control" id="studentName" required />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Course</label
+                  ><input class="form-control" id="course" />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Year</label
+                  ><input class="form-control" id="year" type="number" />
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="examModal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <form id="examForm">
+              <div class="modal-header">
+                <h5 class="modal-title">Add Exam</h5>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                ></button>
+              </div>
+              <div class="modal-body">
+                <input type="hidden" id="examId" />
+                <div class="mb-3">
+                  <label class="form-label">Subject</label>
+                  <input class="form-control" id="examSubject" required />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Exam Code</label>
+                  <input class="form-control" id="examCode" />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Duration (mins)</label>
+                  <input type="number" class="form-control" id="examDuration" />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Date</label>
+                  <input type="date" class="form-control" id="examDateInput" />
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toasts -->
+      <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1080">
+        <div id="toastContainer"></div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

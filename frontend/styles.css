@@ -1,0 +1,160 @@
+/* Professional theme overrides */
+:root{
+	--brand-500:#2466ff;
+	--brand-600:#1b4ed9;
+	--muted-600:#6b7280;
+	--surface:#ffffff;
+	--glass: rgba(255,255,255,0.7);
+}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+html,body{height:100%;}
+body{
+	font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+	background: linear-gradient(180deg, #f6f9ff 0%, #eef4ff 100%);
+	color: #000; /* make main text black per request */
+	-webkit-font-smoothing:antialiased;
+	-moz-osx-font-smoothing:grayscale;
+}
+.container{ max-width:1200px; }
+
+header.bg-primary{
+	background: linear-gradient(90deg, var(--brand-500), var(--brand-600));
+	box-shadow: 0 6px 18px rgba(27,78,217,0.12);
+	/* more breathing room */
+	padding-top: 2.5rem;
+	padding-bottom: 2.5rem;
+	margin-bottom: 2.5rem;
+}
+header h1{ letter-spacing: -0.2px; }
+
+/* Center the main title across the header while keeping stat pills on the right */
+/* header title centered by normal flow (stacked layout) */
+.brand-title{
+	text-align:center;
+	display:block;
+	font-size:1.6rem;
+	margin-bottom:0.35rem;
+}
+
+.nav-tabs .nav-link{
+	border: none;
+	color: var(--muted-600);
+	padding: 1.05rem 2.4rem; /* increased padding for more space */
+	border-radius: 12px;
+	font-size: 1.02rem;
+	font-weight: 600;
+}
+.nav-tabs .nav-link.active{
+	background: linear-gradient(90deg, rgba(137, 154, 196, 0.12), rgba(145, 171, 243, 0.08));
+	color: var(--brand-600);
+	box-shadow: 0 4px 10px rgba(117, 122, 134, 0.06);
+}
+
+/* Add more space between tab items */
+.nav-tabs{ display:flex; gap:2.8rem; margin-bottom:1.5rem; justify-content:center; flex-wrap:wrap; }
+.nav-tabs .nav-item{ margin-right:0; }
+
+/* On very small screens keep spacing but allow tighter wrap */
+@media (max-width:575px){
+	.nav-tabs{ gap:0.75rem; }
+	.nav-tabs .nav-link{ padding:0.65rem 1rem; font-size:0.95rem; }
+}
+
+.table-responsive{ background: var(--surface); border-radius:10px; padding:0.5rem; box-shadow: 0 6px 20px rgba(16,24,40,0.04); }
+.table thead.table-dark th{ background:#0b1220; color:#fff; opacity:0.95; }
+.table td, .table th{ vertical-align:middle; }
+.table tr:hover{ background: rgba(36,102,255,0.03); }
+
+.btn-primary{ background:var(--brand-500); border-color:var(--brand-500); }
+.btn-primary:hover{ background:var(--brand-600); border-color:var(--brand-600); }
+.btn-outline-primary{ color:var(--brand-600); border-color: rgba(36,102,255,0.12); }
+
+/* Modals */
+.modal-content{ border-radius:12px; box-shadow: 0 10px 30px rgba(2,6,23,0.08); }
+
+/* Toasts */
+#toastContainer .toast{ min-width:260px; border-radius:10px; box-shadow: 0 8px 24px rgba(2,6,23,0.08); }
+
+/* Small helpers */
+.h5{ font-weight:600; }
+.mb-3 .btn, .d-flex .btn{ font-weight:600; }
+
+/* Responsive tweaks */
+@media (max-width:767px){
+	.nav-tabs{ display:flex; gap:0.5rem; overflow:auto; }
+	.nav-tabs .nav-link{ white-space:nowrap; }
+}
+
+/* Keep legacy minimal override for file */
+/* end */
+
+.brand-title{ color: #fff; font-weight:700; }
+.stat-pill{ padding:10px 18px; background: rgba(255,255,255,0.06); border-radius:10px; min-width:110px; margin:0 6px; }
+
+/* Make tab panes look like cards */
+.tab-content > .tab-pane{ padding: 1rem 0; }
+.tab-content > .tab-pane .card-panel{ background: var(--surface); border-radius:10px; padding:1rem; box-shadow: 0 8px 24px rgba(2,6,23,0.04); }
+
+/* Refine table cells and control spacing */
+.table td, .table th{ padding:0.85rem 1rem; }
+.table .btn{ padding:0.35rem 0.7rem; font-size:0.85rem; }
+
+/* Accent utilities */
+.text-white-50{ opacity:0.9; color:rgba(255,255,255,0.9); }
+
+/* Card wrapper used under header */
+.card-panel{ background: var(--surface); border-radius:14px; margin-top:-24px; overflow:hidden; }
+.card-panel .nav-tabs{ margin:0; border-bottom: 1px solid rgba(15,23,42,0.06); padding:0.75rem 1rem; }
+.card-panel .nav-tabs .nav-link{ background:transparent; }
+.card-panel .p-3{ background:transparent; }
+.card-panel-body{ background:transparent; }
+
+/* Larger stat pills */
+.stat-pill{ padding:14px 18px; background: rgba(255,255,255,0.06); border-radius:12px; min-width:110px; }
+.stat-pill small{ display:block; opacity:0.85; font-size:0.85rem; }
+.stat-pill strong{ font-size:1.45rem; display:block; }
+
+/* Gradient table header */
+.table thead th{ background: linear-gradient(90deg,var(--brand-500),var(--brand-600)) !important; color:#fff !important; border:none; }
+.table thead th:first-child{ border-top-left-radius:8px; }
+.table thead th:last-child{ border-top-right-radius:8px; }
+
+/* Pull the header title up a bit */
+.brand-title{ font-size:1.8rem; }
+
+/* Preloader overlay */
+#preloader{
+	position:fixed;
+	inset:0;
+	background: linear-gradient(180deg, rgba(36,102,255,0.92), rgba(27,78,217,0.88));
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	z-index:11000;
+}
+.preloader-inner{ text-align:center; }
+
+/* animated three dots */
+.loader-dots{ display:inline-flex; gap:10px; align-items:end; }
+.loader-dots span{ display:block; width:12px; height:12px; background:rgba(255,255,255,0.96); border-radius:50%; transform:translateY(0); opacity:0.3; animation:loader-bounce 1s infinite ease-in-out; }
+.loader-dots span:nth-child(1){ animation-delay:0s; }
+.loader-dots span:nth-child(2){ animation-delay:0.12s; }
+.loader-dots span:nth-child(3){ animation-delay:0.24s; }
+@keyframes loader-bounce{
+	0%{ transform:translateY(0); opacity:0.35 }
+	40%{ transform:translateY(-10px); opacity:1 }
+	80%{ transform:translateY(0); opacity:0.45 }
+	100%{ transform:translateY(0); opacity:0.35 }
+}
+
+.loader-text{ color: rgba(255,255,255,0.95); font-weight:600; }
+
+/* fade-out transition */
+.preloader.fade-out{ opacity:0; transition: opacity 420ms ease-out; pointer-events:none; }
+.preloader.hidden{ display:none !important; }
+
+/* preloader progress bar */
+.preloader-progress{ width:220px; height:8px; background: rgba(255,255,255,0.12); border-radius:999px; overflow:hidden; margin:0 auto; }
+.preloader-progress-bar{ height:100%; background: linear-gradient(90deg, rgba(255,255,255,0.96), rgba(255,255,255,0.75)); width:0%; transition: width 320ms ease; }
+
+
